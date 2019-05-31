@@ -19,7 +19,9 @@ There are multiple reasons for its popularity among data scientists and data eng
 If you haven't used Spark yet, feel free give it a quick spin using the Docker image and notebook included in [this Spark workshop](https://github.com/stefano-meschiari/spark_workshop).
 
 ## Spark Web UI: The one-stop-shop
-Spark serves a Web app that can be used to inspect the currently running Spark application, called the Spark UI. The Spark UI offers a variety of tools to help you:
+*Web UI diagram*
+
+By default, Spark serves a web app that can be used to inspect the currently running Spark application, called the Spark UI. The Spark UI offers a variety of tools to help you:
 
 * understand the performance characteristics and bottlenecks of the various intermediate data transformations;
 * inspect running queries and how they are distributed to executors;
@@ -32,10 +34,12 @@ To view the Spark Web UI:
 
 ### Stages
 *Screenshot of the Web UI*
+
 The `Stages` tab provides tools to inspect the  the transformation graph that builds an intermediate dataset or RDD, and how each stage is broken up into tasks.
 
 ### Executors
 *Screenshot of the Executors tab*
+
 The `Executors` tab shows the currently running executors. For each executor, it is possible to view exactly what code each thread on the executor is executing by clicking `Thread Dump`. Threads executing computations are called `Executor tasks` in the table.
 
 ### SQL
@@ -119,12 +123,13 @@ In the case of our pipeline, we found that a slowdown during model feature extra
 
 #### Slow writing to S3
 * Spark writes to a temporary location in S3 (`{destination}/_temporary`), then moves part-files to the final destination. This move operation is very slow, which means that some jobs can appear to be stuck, while waiting on the move to complete.
-* Writing to HDFS, then copying from HDFS to S3 using [`s3-dist-cp`](https://docs.aws.amazon.com/emr/latest/ReleaseGuide/UsingEMR_s3distcp.html)  reduces the time spent writing to S3 by an order of magnitude (we observed jobs that took > 6 hours to complete when writing directly to S3, but less than 20 minutes when doing HDFS -> S3). This can be done by writing data to HDFS first, then using `s3-dist-cp` to copy/move to S3.
+* Writing to HDFS, then copying from HDFS to S3 using [`s3-dist-cp`](https://docs.aws.amazon.com/emr/latest/ReleaseGuide/UsingEMR_s3distcp.html)  reduces the time spent writing to S3 by an order of magnitude (we observed jobs that took > 6 hours to complete when writing directly to S3, but less than 20 minutes when doing HDFS to S3). This can be done by writing data to HDFS first, then using `s3-dist-cp` to copy/move to S3.
 
 #### Avoiding small/large files
-maxRecordsPerFile
+TODO: maxRecordsPerFile
 
 #### Caching and checkpointing
+TODO: difference between caching (persisting) and checkpointing. When is it appropriate, and when is it not a good idea.
 
 ## Conclusion
 
