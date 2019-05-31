@@ -56,10 +56,12 @@ You can view the current configuration of your Spark application using the _Envi
 Defaults can be overridden  in a variety of ways. 
 
 * *At initialization time*, when a [Spark session is created](https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.SparkConf)
-* *From the command line*, by passing additional command line parameters to `spark-submit`. For instance, the command below sets `executor-memory` to 10g and `driver-memory` to 8g. The most important configuration options are passed as command-line parameters (e.g. `—driver-memory` or `--num-executors`; see `spark-submit --help` for a full list); the remaining parameters are passed as key-value combinations through multiple `--conf` arguments (e.g. `--conf "spark.network.timeout=1000s"`).\
+* *From the command line*, by passing additional command line parameters to `spark-submit`. For instance, the command below sets `executor-memory` to 10g and `driver-memory` to 8g. The most important configuration options are passed as command-line parameters (e.g. `—driver-memory` or `--num-executors`; see `spark-submit --help` for a full list); the remaining parameters are passed as key-value combinations through multiple `--conf` arguments (e.g. `--conf "spark.network.timeout=1000s"`).
+
 ```
 /usr/bin/spark-submit --conf "spark.network.timeout=1000s" --num-executors 4 --driver-memory 8g --executor-memory 10g /home/hadoop/spark_app.py
 ```
+
 * Using the cloud platform's job configuration facilities (e.g. [configuring Spark for EMR](https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-spark-configure.html))
 
 
@@ -116,8 +118,9 @@ without repercussions on the actual running of Spark jobs.
 Try increasing the network timeout (`spark.network.timeout`).
 
 #### A small number of stages dominate runtime for a job (data skew)
-This is typically indicative of strong data skew, manifesting itself during slow joins. If a single logical partition is much larger than the others, the data skew might make it harder to distribute and run computations in parallel. [This post](https://coxautomotivedatasolutions.github.io/datadriven/spark/data%20skew/joins/data_skew/) details the underlying reasons causing this issue. In some cases, increasing parallelism by increasing the number of partitions (with `repartition()` and increasing `spark.sql.shuffle.partitions`) and cores (`spark.executor.cores`) is sufficient, but more often, it will be necessary to modify the underlying data or the data transformation to rebalance the size of the partitions involved. 
+*Screenshot of dataset with data skew*
 
+This is typically indicative of strong data skew, manifesting itself during slow joins. If a single logical partition is much larger than the others, the data skew might make it harder to distribute and run computations in parallel. [This post](https://coxautomotivedatasolutions.github.io/datadriven/spark/data%20skew/joins/data_skew/) details the underlying reasons causing this issue. In some cases, increasing parallelism by increasing the number of partitions (with `repartition()` and increasing `spark.sql.shuffle.partitions`) and cores (`spark.executor.cores`) is sufficient, but more often, it will be necessary to modify the underlying data or the data transformation to rebalance the size of the partitions involved. 
 
 In the case of our pipeline, we found that a slowdown during model feature extraction originated in a specific window operation that worked on data partitioned by the user initiating an authentication. The size distribution of the user windows was skewed to the point that the query would either not complete, or would take a much longer time than anticipated to complete. We discovered that the data skew was caused by automated processes that were, in some cases, generating massive amounts of regularly spaced authentications compared to real, human users. Because the data from the automated processes was irrelevant to our models, we filtered out those partitions, resulting in a >16x speedup of our feature extraction code.
 
