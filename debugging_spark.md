@@ -1,6 +1,6 @@
 # Dumb title
 
-Apache Spark has become the engine of choice for processing massive amounts of data in a distributed fashion. The machine learning pipeline that powers Duo's [UEBA](https://duo.com/blog/automate-threat-detection-with-duos-ueba) uses Spark on AWS Elastic MapReduce (EMR) to process authentication data, build model features, train custom models, and assign an anomaly score to incoming authentications. 
+Apache Spark has become the engine of choice for processing massive amounts of data in a distributed fashion. The machine learning pipeline that powers Duo's [UEBA](https://duo.com/blog/automate-threat-detection-with-duos-ueba) uses Spark on AWS Elastic MapReduce (EMR) to process authentication data, build model features, train custom models, and assign threat scores to incoming authentications. 
 
 Spark abstracts away a lot of the complexity involved in optimizing, scheduling, and executing data transformations. However, in our experience, there’s still a lot of effort involved on the part of the implementer to build a solution that will be robust in different scenarios. Because there are many types of applications and data workloads, and Spark offers a wide array of tuning parameters, settling on a robust and broadly applicable configuration is somewhat of an art — an art that is problem- and scale-dependent (although there have been [attempts](https://www.computer.org/csdl/proceedings/hpcc/2016/4297/00/07828429.pdf)  to automate this process).
 
